@@ -138,13 +138,6 @@ class _NormalSink extends _CrcSink {
     }
   }
 
-  void _crc64Loop(List<int> chunk, int start, int end) {
-    for (int b in chunk.getRange(start, end)) {
-      _value = _table[((_value >> 56) & 0xFF) ^ b] ^
-          ((_value << 8) & 0xFFFFFFFFFFFFFFFF);
-    }
-  }
-
   @override
   CrcLoopFunction _selectLoopFunction(int width) {
     void _crcLoop(List<int> chunk, int start, int end) {
@@ -157,8 +150,6 @@ class _NormalSink extends _CrcSink {
     }
 
     switch (width) {
-      case 64:
-        return _crc64Loop;
       case 32:
         return _crc32Loop;
       case 24:
@@ -190,7 +181,7 @@ class _ReflectedSink extends _CrcSink {
   void _crcLoop(List<int> chunk, int start, int end) {
     for (int b in chunk.getRange(start, end)) {
       _value =
-          (_table[(_value ^ b) & 0xFF] ^ ((_value >> 8) & 0xFFFFFFFFFFFFFF));
+          (_table[(_value ^ b) & 0xFF] ^ ((_value >> 8) & 0xFFFFFF));
     }
   }
 
@@ -316,12 +307,6 @@ List<int> _createByteLookupTable(int width, int poly, bool reflected) {
 // Naming convention: Crc<width><app> where <width> is the bit count, and <app>
 // is a well-known use of the routine. Please specify both fields even if the
 // algorithm is only used by one thing.
-
-/// CRC-64 variant used in XZ utils.
-class Crc64Xz extends ParametricCrc {
-  Crc64Xz()
-      : super(64, 0x42F0E1EBA9EA3693, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF);
-}
 
 /// CRC-32 variant used in Zlib.
 class Crc32Zlib extends ParametricCrc {
