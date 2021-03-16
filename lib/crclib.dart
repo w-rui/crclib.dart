@@ -39,11 +39,11 @@ import 'package:tuple/tuple.dart' show Tuple2;
 
 /// Ultimate sink that stores the final CRC value.
 class _FinalSink extends Sink<int> {
-  int _value;
+  int? _value;
 
   int get value {
     assert(_value != null);
-    return _value;
+    return _value!;
   }
 
   @override
@@ -65,7 +65,7 @@ abstract class _CrcSink extends ByteConversionSinkBase {
   final List<int> _table;
   final int _finalMask;
   final Sink<int> _outputSink;
-  CrcLoopFunction _loopFunction;
+  late CrcLoopFunction _loopFunction;
   int _value;
   bool _closed;
 
@@ -222,7 +222,7 @@ class ParametricCrc extends Converter<List<int>, int> {
   static Map<Tuple2<int, bool>, List<int>> _generatedTables =
       new Map<Tuple2<int, bool>, List<int>>();
 
-  List<int> _table;
+  late List<int> _table;
   final int _width;
   final int _polynomial;
   final int _initialValue;
@@ -241,11 +241,11 @@ class ParametricCrc extends Converter<List<int>, int> {
     assert((_width % 8) == 0, "Bit level checksums not supported yet.");
 
     final key = new Tuple2(_polynomial, _inputReflected);
-    _table = _generatedTables[key];
-    if (_table == null) {
-      _table = _createByteLookupTable(_width, _polynomial, _inputReflected);
-      _generatedTables[key] = _table;
-    }
+
+    if (_generatedTables[key] == null)
+      _generatedTables[key] = _createByteLookupTable(_width, _polynomial, _inputReflected);
+
+    _table = _generatedTables[key]!;
   }
 
   @override

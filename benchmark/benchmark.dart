@@ -17,7 +17,7 @@ import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:crclib/crclib.dart';
 
 class CrcSink extends Sink<int> {
-  int value;
+  int? value;
 
   @override
   void add(int i) {
