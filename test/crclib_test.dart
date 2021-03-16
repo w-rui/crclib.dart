@@ -90,13 +90,4 @@ main() {
     });
   });
 
-  group('crc64', () {
-    testManyAlgos({
-      () => new Crc64Xz(): const [
-        0x995DC9BBDF1939FA,
-        0xB1CB31BBB4A2B2BE,
-        0x5B5EB8C2E54AA1C4,
-      ],
-    });
-  });
 }
